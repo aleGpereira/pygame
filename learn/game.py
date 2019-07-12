@@ -14,10 +14,9 @@ screen = pygame.display.set_mode((800, 600))
 running = True
 
 player = Player()
-
+heroes = pygame.sprite.Group()
+heroes.add(player)
 pidgeons = pygame.sprite.Group()
-characters = pygame.sprite.Group()
-characters.add(player)
 
 pygame.time.set_timer(LETGO_PIDGEON, 500)
 
@@ -37,17 +36,19 @@ while running:
         elif event.type == LETGO_PIDGEON:
             pidgeon = Pidgeon()
             pidgeons.add(pidgeon)
-            print("pidgeon added")
 
-    pressed_keys = pygame.key.get_pressed()
-    # Draw the player to the screen
     screen.fill((0, 0, 0))
-    for character in characters:
-        character.update(pressed_keys)
-        screen.blit(character.surf, character.rect)
+    # Draw the player to the screen
+    pressed_keys = pygame.key.get_pressed()
+    for hero in heroes:
+        hero.update(pressed_keys)
+        screen.blit(hero.surf, hero.rect)
     for pidgeon in pidgeons:
         pidgeon.update()
         screen.blit(pidgeon.surf, pidgeon.rect)
 
+    if pygame.sprite.spritecollideany(player, pidgeons):
+        player.kill()
+        # running = False
     # Update the display
     pygame.display.flip()
